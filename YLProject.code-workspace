@@ -1,0 +1,18 @@
+{
+	"folders": [
+		{
+			"path": "."
+		}
+	],
+	"settings": {
+		"sqltools.connections": [
+			{
+				"previewLimit": 50,
+				"driver": "SQLite",
+				"database": "${workspaceFolder:YandexLyceumProject}/events.sqlite",
+				"name": "cum"
+			}
+		],
+		"sqltools.useNodeRuntime": true
+	}
+}

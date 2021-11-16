@@ -1,0 +1,4 @@
+([('test',
+   '/Users/vladbelov/Library/Mobile '
+   'Documents/com~apple~CloudDocs/Documents/ОБЩЕЕ/YandexLyceumProject/dist/test',
+   'EXECUTABLE')],)
