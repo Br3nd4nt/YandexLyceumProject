@@ -1,1 +1,1 @@
-pyinstaller test.py -F -w
+pyinstaller AllInOne.py -F -w
