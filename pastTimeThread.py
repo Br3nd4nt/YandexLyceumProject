@@ -19,7 +19,7 @@ class TimeChecker(QObject):
 
 
     def run(self):
-        self.con = sqlite3.connect(Database().path)
+        self.con = sqlite3.connect('events.sqlite')
         self.cur = self.con.cursor()
         self.events = []
         while True:

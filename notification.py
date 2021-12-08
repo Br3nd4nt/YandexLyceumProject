@@ -9,19 +9,13 @@ class Notification:
 
     def notify(self, title, text):
         if self.OS == 'Darwin':
-            pass # implement later
-        elif self.OS == "win32" or self.OS == "win64" or self.OS == 'Windows':
+            os.system(f"""
+                osascript -e 'display notification "{title}" with title "{text}"'
+                """)
+        elif self.OS == "win32" or self.OS == "win64":
             try:
-                import win10toast
-                toast = win10toast.ToastNotifier()
-                toast.show_toast(title, text, duration=5, icon_path='logo.ico')
+                from win10toast import ToastNotifier
+                toast = ToastNotifier()
+                toast.showToast(title, text, duration=20)
             except Exception as e:
                 print(e)
-
-
-
-
-if __name__ == "__main__":
-    n = Notification()
-    print(platform.system())
-    n.notify('1', '1')

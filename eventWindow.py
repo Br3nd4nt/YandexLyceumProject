@@ -1,16 +1,15 @@
 from PyQt5 import uic
 from PyQt5.QtCore import QTime, QDate
-from PyQt5.QtGui import QIcon
 from PyQt5.QtWidgets import QMainWindow
 from database import Database
 from event import Event
+import eventScreen
 
-class EventWindow(QMainWindow):
+class EventWindow(QMainWindow, eventScreen.Ui_MainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('layouts/eventScreen.ui', self)
-        logo = QIcon('logo.ico')
-        self.setWindowIcon(logo)
+        # uic.loadUi(self)
         self.db = Database()
         self.deleteButton.setStyleSheet('QPushButton {color: #FF0000}')
         self.deleteButton.clicked.connect(self.delete)

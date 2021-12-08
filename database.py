@@ -3,21 +3,16 @@ import os
 from event import Event
 
 
-
 class Database:
     def __init__(self):
         self.name = 'events.sqlite'
-        self.path = os.path.join(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events'), self.name)
-        if not os.path.isdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events')) or self.name not in os.listdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events')):
+        if self.name not in os.listdir():
             self.create()
-        self.con = sqlite3.connect(self.path)
+        self.con = sqlite3.connect(self.name)
         self.cur = self.con.cursor()
 
     def create(self):
-        # print(self.name)
-        if not os.path.isdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events')):
-            os.mkdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events'))
-        open(self.path, 'w+').close()
+        open(self.name, 'w+').close()
         creation_text = '''CREATE TABLE Events (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT,
@@ -31,7 +26,7 @@ class Database:
         info TEXT,
         past BOOL,
         current BOOL);'''
-        con = sqlite3.connect(self.path)
+        con = sqlite3.connect(self.name)
         con.cursor().execute(creation_text)
         con.close()
 
@@ -78,5 +73,4 @@ class Database:
 
 if __name__ == '__main__':
     db = Database()
-    db.createEvent(Event(1, 'a', 1, 1, 1, 1, 1, 1, 1, 'asdad', False, 'False'))
-    print(db.getAllEvents())
+    print(db.getEventsTime())

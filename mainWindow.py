@@ -1,19 +1,20 @@
 from PyQt5 import uic
 from PyQt5.QtWidgets import QMainWindow, QListWidgetItem
 from PyQt5.QtCore import QSize, QThread, QTime
-from PyQt5.QtGui import QBrush, QColor, QIcon
+from PyQt5.QtGui import QBrush, QColor
 from database import Database
 from eventWindow import EventWindow
 from event import Event
 import datetime
 from pastTimeThread import TimeChecker
 
-class MainWindow(QMainWindow):
+import c
+
+class MainWindow(QMainWindow, c.Ui_MainWindow):
     def __init__(self):
         super().__init__()
-        uic.loadUi('layouts/mainScreen.ui', self)
-        logo = QIcon('logo.ico')
-        self.setWindowIcon(logo)
+        # uic.loadUi('layouts/mainScreen.ui', self)
+        self.setupUi(self)
         self.db = Database()
 
 

@@ -1,7 +1,1 @@
-python -m PyInstaller AllInOne.py -F -w -y -n"Events" -i"logo.ico" --add-data="logo.ico;ico"
-
-
-
-
-
-python Makespec.py AllInOne.py -F -w -y -n"Events" -i"logo.ico"
+pyinstaller AllInOne.py -F -w
