@@ -4,7 +4,7 @@ from PyQt5.QtCore import QDate, QObject, QSize, QThread, QTime, pyqtSignal
 import sqlite3
 import os
 import datetime
-from PyQt5.QtGui import QBrush, QColor
+from PyQt5.QtGui import QBrush, QColor, QIcon
 from PyQt5.QtWidgets import QApplication, QListWidgetItem, QMainWindow
 import platform
 import sys
@@ -14,17 +14,15 @@ from PyQt5 import QtWidgets
 class Notification:
     def __init__(self):
         self.OS = platform.system()
-
+        
     def notify(self, title, text):
         if self.OS == 'Darwin':
-            os.system(f"""
-                osascript -e 'display notification "{title}" with title "{text}"'
-                """)
-        elif self.OS == "win32" or self.OS == "win64":
+            pass # implement later
+        elif self.OS == "win32" or self.OS == "win64" or self.OS == 'Windows':
             try:
-                from win10toast import ToastNotifier
-                toast = ToastNotifier()
-                toast.showToast(title, text, duration=20)
+                import win10toast
+                toast = win10toast.ToastNotifier()
+                toast.show_toast(title, text, duration=5, icon_path='logo.ico')
             except Exception as e:
                 print(e)
 
@@ -70,13 +68,17 @@ class Event:
 class Database:
     def __init__(self):
         self.name = 'events.sqlite'
-        if self.name not in os.listdir():
+        self.path = os.path.join(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events'), self.name)
+        if not os.path.isdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events')) or self.name not in os.listdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events')):
             self.create()
-        self.con = sqlite3.connect(self.name)
+        self.con = sqlite3.connect(self.path)
         self.cur = self.con.cursor()
 
     def create(self):
-        open(self.name, 'w+').close()
+        # print(self.name)
+        if not os.path.isdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events')):
+            os.mkdir(os.path.join(os.path.expanduser('~'), 'AppData', 'Local', 'Events'))
+        open(self.path, 'w+').close()
         creation_text = '''CREATE TABLE Events (
         id INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL,
         name TEXT,
@@ -90,7 +92,7 @@ class Database:
         info TEXT,
         past BOOL,
         current BOOL);'''
-        con = sqlite3.connect(self.name)
+        con = sqlite3.connect(self.path)
         con.cursor().execute(creation_text)
         con.close()
 
@@ -98,9 +100,10 @@ class Database:
         self.con.close()
 
     def createEvent(self, event: Event):
-        # print(f'creating "{event.name}"')
+        print(f'creating "{event.name}"')
         self.cur.execute(f"INSERT INTO Events(name,year,month,day,startHour,startMinute,endHour,endMinute,info,past,current) VALUES('{event.name}',{event.year},{event.month},{event.day},{event.SHour},{event.SMinute},{event.EHour},{event.EMinute},'{event.info}',{event.past},{event.current})")
         self.con.commit()
+        
 
     def getAllEvents(self):
         res = self.cur.execute('SELECT * from Events ORDER BY past ASC, year ASC, month ASC, day ASC, startHour ASC, startMinute ASC').fetchall()
@@ -223,12 +226,13 @@ class Ui_MainWindow(object):
         self.CreateEvent.setText(_translate("MainWindow", "Создать"))
 
 class MainWindow(QMainWindow, Ui_MainWindow ):
-    
     def __init__(self):
         super().__init__()
         # uic.loadUi('layouts/mainScreen.ui', self)
         # uic.loadUi('mainScreen.ui', self)
         self.setupUi(self)
+        logo = QIcon('logo.ico')
+        self.setWindowIcon(logo)
         self.db = Database()
 
         #BLACK MAGIC
@@ -295,7 +299,6 @@ class MainWindow(QMainWindow, Ui_MainWindow ):
 
 class TimeChecker(QObject):
     listUpdateSignal = pyqtSignal()
-    
     def __init__(self):
         super().__init__()
         self.notif = Notification()
@@ -305,8 +308,9 @@ class TimeChecker(QObject):
             self.cur.execute(f'UPDATE Events SET past=true WHERE id={i}')
             self.con.commit()
 
+
     def run(self):
-        self.con = sqlite3.connect('events.sqlite')
+        self.con = sqlite3.connect(Database().path)
         self.cur = self.con.cursor()
         self.events = []
         while True:
@@ -320,14 +324,14 @@ class TimeChecker(QObject):
                 if today > i[5] or (currentTime >= i[2] and today == i[5]):
                     expired.append(i[0])
                 elif currentTime >= i[1] and not i[4] and i[0] not in expired and today == i[5]:
-                    # print(i)
+                    print(i)
                     self.notif.notify(i[3], 'Событие началось')
                     self.cur.execute(f'UPDATE Events SET current = True WHERE id={i[0]}')
                     self.con.commit()
                     i = (i[0], i[1], i[2], i[3], True)
-                    # print(i)
+                    print(i)
             if len(expired) > 0:
-                # print(currentTime)
+                print(currentTime)
                 self.updateDB(*expired)
                 self.listUpdateSignal.emit()
                 # res = []
@@ -482,6 +486,8 @@ class EventWindow(QMainWindow, Ui_EventWindow):
         # uic.loadUi('layouts/eventScreen.ui', self)
         # uic.loadUi('eventScreen.ui', self)
         self.setupUi(self)
+        logo = QIcon('logo.ico')
+        self.setWindowIcon(logo)
         self.db = Database()
         self.deleteButton.setStyleSheet('QPushButton {color: #FF0000}')
         self.deleteButton.clicked.connect(self.delete)
