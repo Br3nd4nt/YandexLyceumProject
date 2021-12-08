@@ -38,3 +38,7 @@ exe = EXE(pyz,
           target_arch=None,
           codesign_identity=None,
           entitlements_file=None )
+app = BUNDLE(exe,
+             name='AllInOne.app',
+             icon=None,
+             bundle_identifier=None)
