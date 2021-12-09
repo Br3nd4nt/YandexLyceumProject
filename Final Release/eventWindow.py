@@ -3,9 +3,8 @@ from PyQt5.QtCore import QTime, QDate
 from PyQt5.QtWidgets import QMainWindow
 from database import Database
 from event import Event
-import eventScreen
 
-class EventWindow(QMainWindow, eventScreen.Ui_MainWindow):
+class EventWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         uic.loadUi('layouts/eventScreen.ui', self)

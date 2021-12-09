@@ -8,9 +8,7 @@ from event import Event
 import datetime
 from pastTimeThread import TimeChecker
 
-import c
-
-class MainWindow(QMainWindow, c.Ui_MainWindow):
+class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         # uic.loadUi('layouts/mainScreen.ui', self)
