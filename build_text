@@ -1,1 +1,0 @@
-  pyinstaller init.py -F --collect-submodules 'modules_to_import.py' --add-data 'eventScreen.ui' --add-data 'mainScreen.ui' --add-data 'database.py' --add-data 'event.py' --add-data 'events.sqlite' --add-data 'eventWindow.py' --add-data 'notification.py' --add-data 'pastTimeThread.py'
